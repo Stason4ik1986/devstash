@@ -15,26 +15,20 @@ import { useSidebar } from "@/components/dashboard/SidebarContext";
 import { SidebarToggle } from "@/components/dashboard/SidebarToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { getCollectionLastActivity } from "@/lib/dashboard";
 import { getItemTypeHref, getItemTypeIcon } from "@/lib/item-types";
-import { collections, currentUser, itemTypes, items } from "@/lib/mock-data";
+import { collections, currentUser, itemTypes } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const RECENT_COLLECTIONS_LIMIT = 5;
 
 const FAVORITE_COLLECTIONS = collections.filter((c) => c.isFavorite);
 
-function getLastActivity(collectionId: string) {
-  return Math.max(
-    0,
-    ...items
-      .filter((item) => item.collectionId === collectionId)
-      .map((item) => new Date(item.updatedAt).getTime()),
-  );
-}
-
 const RECENT_COLLECTIONS = collections
   .filter((c) => !c.isFavorite)
-  .sort((a, b) => getLastActivity(b.id) - getLastActivity(a.id))
+  .sort(
+    (a, b) => getCollectionLastActivity(b.id) - getCollectionLastActivity(a.id),
+  )
   .slice(0, RECENT_COLLECTIONS_LIMIT);
 
 const USER_INITIALS = currentUser.name
